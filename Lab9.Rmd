@@ -1,0 +1,150 @@
+---
+title: "Lab9"
+author: "Yingtong Lyu"
+date: "November 12, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+---
+title: "Lab9"
+author: "Yingtong Lyu"
+date: "November 12, 2018"
+output: pdf_document
+---
+
+
+##1. Consider a function that counts number of odd numbers in a given vector
+```{r}
+odd_count = function(x){
+  odd_num = 0
+  for (i in 1:length(x)){
+    if (x[i] %% 2 ==1) odd_num = odd_num+1
+  }
+  return(odd_num)
+}
+```
+
+Write a vectorized form of this function and compare their performance using microbenchmark function from the package microbenchmark
+```{r}
+library(microbenchmark)
+library(profvis)
+```
+
+```{r}
+odd_count2 <- function(x){
+  sum(x %% 2 ==1)
+  #sum(ifelse(x %% 2==1,yes=1,no=0))
+}
+x <- c(1:100)
+microbenchmark(odd_count(x),odd_count2(x))
+```
+#2. Modify the sorting function (sort_vec) from "Assignment 8" (problem 3) so that it should take an additional argument ascending which causes sorting in increasing order when 'ascending = TRUE'. In other words,
+. sort_vect(c(3, 1, 2), ascending = TRUE) = (1, 2, 3)
+. sort_vect(c(3, 1, 2), ascending = FALSE) = (3, 2, 1)
+
+```{r}
+sort_vec = function(x, ascending = TRUE) {
+    
+  if (length(x) < 2) 
+    return (x)
+  
+  for(last in length(x):2) {
+    for(first in 1:(last - 1)) {
+      
+      if (ascending ==TRUE){
+        
+      if(x[first] > x[first + 1]) {
+        temp <- x[first]
+        x[first] <- x[first + 1]
+        x[first + 1] <- temp
+      }
+      }
+      
+  else {
+      if(x[first] < x[first + 1]) {
+        temp <- x[first]
+        x[first] <- x[first + 1]
+        x[first + 1] <- temp
+      }
+    }
+    }
+  }
+    return(x)
+}
+sort_vec(c(3, 1, 2), ascending = TRUE)
+sort_vec(c(3, 1, 2), ascending = FALSE)
+
+```
+
+
+#3. Consider a simple random walk with starting point 0 and a step -1 or 1. Below is the code with dynamically allocated memory. Write your code with preallocated memory and compare time for both versions using system.time() function (use N = 1000, 10000 and 1000000).
+```{r}
+N = 1000
+data_series = 0
+system.time({for (i in 2:N){
+data_series[i] = data_series[i-1] + sample(c(-1, 1), 1)
+}
+})
+
+```
+
+```{r}
+paste0("N=1000")
+paste0("dynamically allocated memory")
+N = 1000
+data_series = 0 
+system.time({
+  for (i in 2:N){
+    data_series[i] = data_series[i-1] + sample(c(-1, 1), 1) 
+  }
+})
+paste0("preallocated memory")
+N = 1000
+data_series <- vector(length = N)
+system.time({
+  for (i in 2:N){
+    data_series[i] = data_series[i-1] + sample(c(-1, 1), 1) 
+  }
+})
+
+paste0("N=10000")
+paste0("dynamically allocated memory")
+N = 10000
+data_series = 0 
+system.time({
+  for (i in 2:N){
+    data_series[i] = data_series[i-1] + sample(c(-1, 1), 1) 
+  }
+})
+paste0("preallocated memory")
+N = 10000
+data_series <- vector(length = N)
+system.time({
+  for (i in 2:N){
+    data_series[i] = data_series[i-1] + sample(c(-1, 1), 1) 
+  }
+})
+
+paste0("N=1000000")
+paste0("dynamically allocated memory")
+N = 1000000
+data_series = 0 
+system.time({
+  for (i in 2:N){
+    data_series[i] = data_series[i-1] + sample(c(-1, 1), 1) 
+  }
+})
+paste0("preallocated memory")
+N = 1000000
+data_series <- vector(length = N)
+system.time({
+  for (i in 2:N){
+    data_series[i] = data_series[i-1] + sample(c(-1, 1), 1) 
+  }
+})
+```
+
